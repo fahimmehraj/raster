@@ -1,5 +1,6 @@
 open Core
 
+
 (* You need to change the implementation of this function so that it does something
    to the image instead of just leaving it untouched. *)
 let transform (image : Image.t) =
@@ -18,17 +19,8 @@ let%expect_test "transform grayscale" =
   let expected_image =
     Image.load_ppm ~filename:"../images/reference-beach_portrait_gray.ppm"
   in
-  print_s [%message "transformed image height" ~_:(Image.height output_image : int)];
-  [%expect {|("transformed image height" 800)|}];
-  print_s [%message "transformed image width" ~_:(Image.width output_image : int)];
-  [%expect {|("transformed image width" 577)|}];
-  let pixels_diff = Image.foldi output_image ~init:0 ~f:(fun ~x ~y pixels_diff pixel ->
-    let expected_pixel = Image.get expected_image ~x ~y in
-    match Pixel.equal expected_pixel pixel with
-    | true -> pixels_diff
-    | false -> pixels_diff + 1) in
-  print_s [%message "# of pixels different" ~_:(pixels_diff: int)];
-  [%expect {| ("# of pixels different" 0) |}];
+  Image.compare_images_helper output_image expected_image;
+  [%expect {|"images are identical"|}]
 ;;
 
 let command =

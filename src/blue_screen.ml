@@ -26,17 +26,8 @@ let%expect_test "transform blue screen" =
   in
   let output_image = transform ~foreground ~background in
   let expected_output = Image.load_ppm ~filename:"../images/reference-oz_bluescreen_vfx.ppm" in
-  print_s [%message "transformed image height" ~_:(Image.height output_image : int)];
-  [%expect {|("transformed image height" 440)|}];
-  print_s [%message "transformed image width" ~_:(Image.width output_image : int)];
-  [%expect {|("transformed image width" 880)|}];
-  let pixels_diff = Image.foldi output_image ~init:0 ~f:(fun ~x ~y pixels_diff pixel ->
-    let expected_pixel = Image.get expected_output ~x ~y in
-    match Pixel.equal expected_pixel pixel with
-    | true -> pixels_diff
-    | false -> pixels_diff + 1) in
-  print_s [%message "# of pixels different" ~_:(pixels_diff: int)];
-  [%expect {| ("# of pixels different" 0) |}];
+  Image.compare_images_helper output_image expected_output;
+  [%expect {|"images are identical"|}]
   ;;
 
 let command =

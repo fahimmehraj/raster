@@ -1,20 +1,18 @@
 open! Core
 
-(**
-   The [Image] module provides functions to manipulate 2D images in the Portable Pixmap
-   (PPM) format. Each pixel in the image is represented using the [Pixel.t] type. The main
-   type provided by this module is [t], which represents the images. The pixel at position
-   0,0 is the top left corner of the image.
+(** The [Image] module provides functions to manipulate 2D images in the Portable Pixmap
+    (PPM) format. Each pixel in the image is represented using the [Pixel.t] type. The main
+    type provided by this module is [t], which represents the images. The pixel at position
+    0,0 is the top left corner of the image.
 
-   Here's an outline of the functionalities provided by this module:
+    Here's an outline of the functionalities provided by this module:
 
-   - Loading and saving PPM images
-   - Querying image properties (width, height, max value)
-   - Getting and setting individual pixels
-   - Mapping, folding and iterating over pixels in an image
-   - Copying and slicing images
-   - Generating images with a constant pixel color
-*)
+    - Loading and saving PPM images
+    - Querying image properties (width, height, max value)
+    - Getting and setting individual pixels
+    - Mapping, folding and iterating over pixels in an image
+    - Copying and slicing images
+    - Generating images with a constant pixel color *)
 
 type t
 
@@ -23,7 +21,8 @@ type t
     PPM format is invalid. *)
 val load_ppm : filename:string -> t
 
-(** Convert a [t] to a [Graphics.image] that can be displayed with [Graphics.draw_image]. *)
+(** Convert a [t] to a [Graphics.image] that can be displayed with [Graphics.draw_image].
+*)
 val to_graphics_image : t -> Graphics.image
 
 (** Convert a [Graphics.image] to a [t]. *)
@@ -35,7 +34,8 @@ val width : t -> int
 (** [height image] returns the height of the given [image]. *)
 val height : t -> int
 
-(** [max_val image] returns the maximum allowed pixel value of the given [image]. *)
+(** [max_val image] returns the maximum allowed pixel value of the given [image].
+*)
 val max_val : t -> int
 
 (** [get image ~x ~y] returns the pixel at position [(x, y)] of the given [image]. If the
@@ -43,7 +43,8 @@ val max_val : t -> int
 val get : t -> x:int -> y:int -> Pixel.t
 
 (** [set image ~x ~y pixel] sets the pixel at position [(x, y)] of the given [image] to
-    the given [pixel]. If the coordinates are out of bounds, it raises an exception. *)
+    the given [pixel]. If the coordinates are out of bounds, it raises an exception.
+*)
 val set : t -> x:int -> y:int -> Pixel.t -> unit
 
 (** [map image ~f] applies the given function [f] to each pixel of the [image] and returns
@@ -51,7 +52,8 @@ val set : t -> x:int -> y:int -> Pixel.t -> unit
 val map : t -> f:(Pixel.t -> Pixel.t) -> t
 
 (** [mapi image ~f] applies the given function [f] with positions (in [x] and [y]) to each
-    pixel of the [image] and returns a new image with the transformed pixels. *)
+    pixel of the [image] and returns a new image with the transformed pixels.
+*)
 val mapi : t -> f:(x:int -> y:int -> Pixel.t -> Pixel.t) -> t
 
 (** [fold image ~init ~f] folds the given function [f] over all the pixels of the [image],
@@ -61,7 +63,18 @@ val fold : t -> init:'acc -> f:('acc -> Pixel.t -> 'acc) -> 'acc
 (** [foldi image ~init ~f] folds the given function [f] with positions (in [x] and [y])
     over all the pixels of the [image], accumulating the result in a value of type
     ['acc]. *)
-val foldi : t -> init:'acc -> f:(x:int -> y:int -> 'acc -> Pixel.t -> 'acc) -> 'acc
+val foldi
+  :  t
+  -> init:'acc
+  -> f:(x:int -> y:int -> 'acc -> Pixel.t -> 'acc)
+  -> 'acc
+
+(** [iteri image ~init ~f] calls the given function [f] over all the pixels of the [image]*)
+val iter : t -> f:(Pixel.t -> unit) -> unit
+
+(** [iteri image ~init ~f] calls the given function [f] with positions (in [x] and [y])
+    over all the pixels of the [image]*)
+val iteri : t -> f:(x:int -> y:int -> Pixel.t -> unit) -> unit
 
 (** [save_ppm image ~filename] writes the given [image] to the given [filename] in PPM
     format. Raises [Sys_error] if the file cannot be written. *)
@@ -87,3 +100,5 @@ val mean_pixel : t -> Pixel.t
     set the maximum pixel value (default is 255). If [width] or [height] is non-positive,
     the function raises an exception. *)
 val make : ?max_val:int -> width:int -> height:int -> Pixel.t -> t
+
+val compare_images_helper : t -> t -> unit

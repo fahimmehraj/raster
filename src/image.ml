@@ -156,6 +156,13 @@ let foldi t ~init ~f =
     f ~x ~y acc pixel)
 ;;
 
+let iter t ~f = Array.iter t.image ~f
+
+let iteri t ~f = Array.iteri t.image ~f:(fun idx pixel ->
+  let x, y = idx_to_xy t idx in
+  f ~x ~y pixel
+  )
+
 let make ?(max_val = 255) ~width ~height pixel =
   if width <= 0 || height <= 0
   then
@@ -191,6 +198,35 @@ let of_graphics_image image =
     done
   done;
   image
+;;
+
+let compare_images_helper image1 image2 =
+  match width image1 = width image2 with
+  | false ->
+    print_s
+      [%message
+        "width mismatch"
+          (width image1 : int)
+          (width image2 : int)]
+  | true ->
+    (match height image1 = height image2 with
+     | false ->
+       print_s
+         [%message
+           "height mismatch"
+             (height image1 : int)
+             (height image2 : int)]
+     | true ->
+       let pixels_diff =
+         foldi image1 ~init:0 ~f:(fun ~x ~y pixels_diff pixel ->
+           let expected_pixel = get image2 ~x ~y in
+           match Pixel.equal expected_pixel pixel with
+           | true -> pixels_diff
+           | false -> pixels_diff + 1)
+       in
+       (match pixels_diff with
+        | 0 -> print_s [%message "images are identical"]
+        | diff -> print_s [%message "# of pixels different" ~_:(diff : int)]))
 ;;
 
 let simple_test data ~f =
