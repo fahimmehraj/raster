@@ -1,18 +1,24 @@
 open Core
 
-(* You need to change the implementation of this function so that it
-   replaces the "blue" pixels of the foreground image with pixels from
-   the corresponding position in the background image instead of
-   just ignoring the background image and returning the foreground image.
-*)
 
 let is_sufficiently_blue pixel =
-  Pixel.blue pixel > Pixel.red pixel + Pixel.green pixel
+  let blue_val = Float.of_int (Pixel.blue pixel) in
+  let red_val = Float.of_int (Pixel.red pixel) in
+  let green_val = Float.of_int (Pixel.green pixel) in
+  Float.(blue_val >. (1.1 *. red_val)) && Float.(blue_val >. (1.1 *. green_val)) && Float.(blue_val >. 18000.)
 ;;
+
+let is_region_sufficiently_blue image ~x ~y ~radius =
+  let y_start = max (y - radius) 0 in
+  let y_end = min (y + radius) (Image.height image - 1) in
+  let x_start = max (x - radius) 0 in
+  let x_end = min (x + radius) (Image.width image - 1) in
+  let avg_color = Image.slice image ~x_start ~x_end ~y_start ~y_end |> Image.mean_pixel in
+  is_sufficiently_blue avg_color
 
 let transform ~foreground ~background =
   Image.mapi foreground ~f:(fun ~x ~y foreground_pixel ->
-    match is_sufficiently_blue foreground_pixel with
+    match is_region_sufficiently_blue foreground ~x ~y ~radius:1 with
     | true -> Image.get background ~x ~y
     | false -> foreground_pixel)
 ;;
