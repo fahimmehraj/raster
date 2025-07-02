@@ -28,6 +28,14 @@ val zero : t
     [p2]. *)
 val ( + ) : t -> t -> t
 
+(** [p1 - p2] returns a new pixel value formed by component-wise subtraction of [p1] and
+    [p2]. *)
+val ( - ) : t -> t -> t
+
+(** [scalar_product t ~scalar] returns a new pixel value formed by multiplying each component of [t] with
+    [scalar] and rounding the result to the nearest integer. *)
+val scalar_product : t -> scalar:float -> t
+
 (** [of_int x] returns an equivalent pixel value, where each channel has the same integer
     value [x]. This function is most useful when working with grayscale colors. *)
 val of_int : int -> t

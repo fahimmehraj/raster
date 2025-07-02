@@ -7,6 +7,14 @@ let green (_, g, _) = g
 let blue (_, _, b) = b
 let zero = 0, 0, 0
 let ( + ) (r1, g1, b1) (r2, g2, b2) = r1 + r2, g1 + g2, b1 + b2
+let ( - ) (r1, g1, b1) (r2, g2, b2) = r1 - r2, g1 - g2, b1 - b2
+
+let scalar_product (r, g, b) ~scalar =
+  ( Float.of_int r *. scalar |> Float.round |> Int.of_float
+  , Float.of_int g *. scalar |> Float.round |> Int.of_float
+  , Float.of_int b *. scalar |> Float.round |> Int.of_float)
+;;
+
 let of_int i = i, i, i
 let to_string (r, g, b) = [%string "%{r#Int} %{g#Int} %{b#Int}"]
 let to_color (r, g, b) = Graphics.rgb r g b
