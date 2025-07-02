@@ -102,3 +102,5 @@ val mean_pixel : t -> Pixel.t
 val make : ?max_val:int -> width:int -> height:int -> Pixel.t -> t
 
 val compare_images_helper : t -> t -> unit
+
+val fuzzy_compare_images_helper : t -> t -> radius:int -> unit

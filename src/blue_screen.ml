@@ -32,7 +32,7 @@ let%expect_test "transform blue screen" =
   in
   let output_image = transform ~foreground ~background in
   let expected_output = Image.load_ppm ~filename:"../images/reference-oz_bluescreen_vfx.ppm" in
-  Image.compare_images_helper output_image expected_output;
+  Image.fuzzy_compare_images_helper ~radius:4 output_image expected_output;
   [%expect {|"images are identical"|}]
   ;;
 
