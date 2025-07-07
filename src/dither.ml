@@ -26,12 +26,13 @@ let clamped_color ~colors_per_channel ~max_val color =
 ;;
 
 let dithered_pixel ~colors_per_channel ~max_val pixel =
-  ( clamped_color ~colors_per_channel ~max_val (Pixel.red pixel)
-  , clamped_color ~colors_per_channel ~max_val (Pixel.green pixel)
-  , clamped_color ~colors_per_channel ~max_val (Pixel.blue pixel) )
+  let clamped_color = clamped_color ~colors_per_channel ~max_val in
+  ( clamped_color (Pixel.red pixel)
+  , clamped_color (Pixel.green pixel)
+  , clamped_color (Pixel.blue pixel) )
 ;;
 
-let transform ?(colors_per_channel = 1) ?(grayscale = true) image =
+let transform ?(colors_per_channel = 2) ?(grayscale = true) image =
   let image =
     match grayscale with true -> Grayscale.transform image | false -> image
   in
